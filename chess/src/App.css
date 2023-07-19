@@ -1,3 +1,16 @@
 .App {
-  text-align: center;
+background-color: blue;
+padding: 10%;
 }
+
+#chessboard{
+  margin-top: 10px;
+}
+
+body {
+  margin: auto;
+  overflow-y: hidden;
+  width: 98vh;
+  background-color: rgb(241, 225, 148);
+}
+  
