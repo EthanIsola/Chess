@@ -1,48 +1,38 @@
-import { useState } from 'react';
-import { Chessboard } from 'react-chessboard';
-import { Chess } from 'chess.js';
-import './App.css';
-function App() {
+import { useState } from "react";
+import { Chess } from "chess.js";
+import { Chessboard } from "react-chessboard";
+
+export default function Board() {
   const [game, setGame] = useState(new Chess());
-  
-  // perform modify function on game state
-  function safeGameMutate(modify) {
-    setGame((g) => {
-      const update = { ...g };
-      modify(update);
-      return update;
-    });
+
+  const makeMove = (move) => {
+    game.move(move)
+    setGame(new Chess(game.fen()))
   }
-  // make computer move
+
   function makeRandomMove() {
     const possibleMoves = game.moves();
-    // exit if the game is over
-    if (game.game_over() || game.in_draw() || possibleMoves.length === 0) return;
-    // select random move
+    if (game.isGameOver() || game.isDraw() || possibleMoves.length === 0) return; // exit if the game is over
     const randomIndex = Math.floor(Math.random() * possibleMoves.length);
-    // play random move
-    safeGameMutate((game) => {
-      game.move(possibleMoves[randomIndex]);
-    });
+    makeMove(possibleMoves[randomIndex]);
   }
-  // perform action when piece dropped by user
+
   function onDrop(sourceSquare, targetSquare) {
-    // attempt move
-    let move = null;
-    safeGameMutate((game) => {
-      move = game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: 'q'
-      });
+    const move = makeMove({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: "q", // always promote to a queen for example simplicity
     });
-    
-    // illegal move made
+
+    // illegal move
     if (move === null) return false;
-    // valid move made, make computer move
     setTimeout(makeRandomMove, 200);
     return true;
   }
-  return <div id = "chessboard"><Chessboard position={game.fen()} onPieceDrop={onDrop} /></div>;
+
+  return(
+     <div>
+        <Chessboard position={game.fen()} onPieceDrop={onDrop} />
+     </div>
+  )
 }
-export default App;
